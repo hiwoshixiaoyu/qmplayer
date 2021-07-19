@@ -17,3 +17,6 @@ base on ffplay.c use Qt
 
 # 选择构建套件 
 minggw64编译即可
+
+# 参考代码ffplay.c代码
+https://github.com/FFmpeg/FFmpeg/tree/master/fftools
