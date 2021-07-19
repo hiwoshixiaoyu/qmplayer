@@ -53,12 +53,12 @@ static void video_audio_display(VideoState *is)
 
     vp =is->pictq.frame_queue_peek_last();
 
-    if (!vp->uploaded) {
-           if (upload_texture(&is->vid_texture, vp->frame, &is->img_convert_ctx) < 0)
-               return;
-           vp->uploaded = 1;
-           vp->flip_v = vp->frame->linesize[0] < 0;
-    }
+//    if (!vp->uploaded) {
+//           if (upload_texture(&is->vid_texture, vp->frame, &is->img_convert_ctx) < 0)
+//               return;
+//           vp->uploaded = 1;
+//           vp->flip_v = vp->frame->linesize[0] < 0;
+//    }
 
 
 
@@ -70,10 +70,10 @@ static void video_display(VideoState *is)
 
 //    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 //    SDL_RenderClear(renderer);
-    if (is->audio_st && is->show_mode != VideoState::SHOW_MODE_VIDEO)
-        video_audio_display(is);
-    else if (is->video_st)
-        video_image_display(is);
+//    if (is->audio_st && is->show_mode != VideoState::SHOW_MODE_VIDEO)
+//        video_audio_display(is);
+//    else if (is->video_st)
+       // video_image_display(is);
 //    SDL_RenderPresent(renderer);
 }
 void QmPlay::RefreshVideo()
@@ -88,14 +88,14 @@ void QmPlay::RefreshVideo()
         is->check_external_clock_speed();
     }
 
-    if (!display_disable && is->show_mode != VideoState::SHOW_MODE_VIDEO && is->audio_st) {
-            time = av_gettime_relative() / 1000000.0;
-            if (is->force_refresh || is->last_vis_time + rdftspeed < time) {
-                video_display(is);
-                is->last_vis_time = time;
-            }
-            *remaining_time = FFMIN(*remaining_time, is->last_vis_time + rdftspeed - time);
-    }
+//    if (!display_disable && is->show_mode != VideoState::SHOW_MODE_VIDEO && is->audio_st) {
+//            time = av_gettime_relative() / 1000000.0;
+//            if (is->force_refresh || is->last_vis_time + rdftspeed < time) {
+//                video_display(is);
+//                is->last_vis_time = time;
+//            }
+//            *remaining_time = FFMIN(*remaining_time, is->last_vis_time + rdftspeed - time);
+//    }
 
 
 }
