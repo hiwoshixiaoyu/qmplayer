@@ -16,8 +16,8 @@ public:
         VideoState* getState();
     void start();
 private:
-    void init();
 
+    void init();
     int  Run();
     void RunDecoder(int type);
 

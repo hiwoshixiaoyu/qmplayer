@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,3 +30,7 @@ include($$PWD/ffplay/ffplay.pri)
 
 HEADERS += \
     tester.h
+
+RESOURCES += \
+    res.qrc
+

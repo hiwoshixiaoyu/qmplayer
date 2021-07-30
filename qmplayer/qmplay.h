@@ -7,13 +7,11 @@
 
 #include <ffplay/readthread.h>
 
+
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class QmPlay; }
 QT_END_NAMESPACE
-
-
-
-
 
 
 class QmPlay : public QMainWindow
@@ -25,11 +23,13 @@ public:
     ~QmPlay();
 
 private slots:
-    void on_btntester_clicked();
+    //void on_btntester_clicked();
 
-    void on_btnread_clicked();
+
 
     void RefreshVideo();
+    void on_btnplay_clicked();
+
 private:
     Ui::QmPlay *ui;
     Tester t;

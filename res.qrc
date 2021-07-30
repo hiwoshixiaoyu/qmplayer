@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/planar.frag</file>
+        <file>res/video.vert</file>
+    </qresource>
+</RCC>

@@ -13,6 +13,14 @@ static const char* wanted_stream_spec[AVMEDIA_TYPE_NB] = {0};
 //static enum ShowMode show_mode = SHOW_MODE_NONE;
 ReadThread::ReadThread()
 {
+
+
+
+}
+
+
+void ReadThread::init()
+{
     av_log_set_flags(AV_LOG_SKIP_REPEATED);
 #if CONFIG_AVDEVICE
     avdevice_register_all();
@@ -20,22 +28,19 @@ ReadThread::ReadThread()
     avformat_network_init();
     m_filename = "E://a.mp4";
     m_VideoState = new VideoState;
-    this->init();
 
-}
-
-
-void ReadThread::init()
-{
-    m_VideoState = new VideoState;
     m_VideoState->init();
-    m_threadRead = new std::thread(&ReadThread::Run,this);
     m_threaddecodeImp = new DecodeThread(m_VideoState);
+    m_threadRead = new std::thread(&ReadThread::Run,this);
+    m_threadRead->detach();
+
+
 }
 
 void ReadThread::start()
 {
-    m_threadRead->detach();
+    init();
+
 }
 
 
@@ -188,7 +193,7 @@ void ReadThread::RunDecoder(int type)
     if( AVMEDIA_TYPE_VIDEO == type && st_index[AVMEDIA_TYPE_VIDEO] >= 0)
     {
         m_VideoState->stream_component_open(st_index[AVMEDIA_TYPE_VIDEO]);
-        m_threadVideo = new std::thread(&DecodeThread::RunAudio,m_threaddecodeImp);
+        m_threadVideo = new std::thread(&DecodeThread::RunVideo,m_threaddecodeImp);
         m_threadVideo->detach();
 
     }

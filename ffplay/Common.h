@@ -165,4 +165,17 @@ static AVDictionary *filter_codec_opts(AVDictionary *opts, enum AVCodecID codec_
     }
     return ret;
 }
+
+
+
+struct VideoFormat
+{
+    float width;
+    float height;
+    float rotate;
+    int format;
+
+    AVFrame *renderFrame;
+    std::mutex *renderFrameMutex;
+};
 #endif // COMMON_H

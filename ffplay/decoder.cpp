@@ -5,16 +5,8 @@ static int decoder_reorder_pts = -1;
 int Decoder::decoder_init(AVCodecContext *avctx, PacketQueue *queue, std::condition_variable *empty_queue_cond)
 {
 
-
-
-    this->pkt =nullptr;
-    this->queue = nullptr;
-    this->avctx = nullptr;
-    this->pkt_serial = 0;
     this->finished = 0;
     this->packet_pending = 0;
-    this->empty_queue_cond=nullptr;
-
     this->start_pts = 0;
     this->start_pts_tb.den =0 ;
     this->start_pts_tb.num = 0;
