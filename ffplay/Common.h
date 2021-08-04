@@ -178,4 +178,31 @@ struct VideoFormat
     AVFrame *renderFrame;
     std::mutex *renderFrameMutex;
 };
+
+
+enum TaskType
+{
+    Task_Nil = -1,
+    Task_File = 0,//设置源
+    Task_Play,    //播放
+    Task_Pause,   //暂停
+    Task_Stop,    //停止
+    Task_Seek,    //Seek
+    Task_Close,   //关闭
+    Task_StartDecoder,//开启解码器
+    Task_FindDecoder,//查询解码器
+};
+
+
+//任务
+struct Task
+{
+    TaskType type;
+    std::string filePath;
+    int seek;
+    Task()
+    {
+        type = Task_Nil;
+    }
+};
 #endif // COMMON_H

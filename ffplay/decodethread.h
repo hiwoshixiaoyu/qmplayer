@@ -15,6 +15,7 @@ public:
     int get_video_frame(AVFrame *frame);
     int queue_picture(AVFrame *src_frame, double pts, double duration, int64_t pos, int serial);
 
+
     VideoState *is;
 };
 

@@ -1,4 +1,8 @@
 #include "qglwnd.h"
+
+#include <QOpenGLTexture>
+
+
 //顶点数组(物体表面坐标取值范围是-1到1,数组坐标：左下，右下，左上，右上)
 //左上 -1.0f  -1.0f
 //右上 1.0f  -1.0f
@@ -11,8 +15,15 @@ static const GLfloat vertexVertices[] = {
    -1.0f,  1.0f, 0.0f
 };
 
+
+
+
+
+
 //像素，纹理数组(纹理坐标取值范围是0-1，坐标原点位于左下角,数组坐标：左上，右上，左下，右下,如果先左下，图像会倒过来)
 static const GLfloat textureVertices[] = {
+    0.0f,  0.0f,
+    1.0f,  0.0f,
     1.0f,  1.0f,
     0.0f,  1.0f,
     0.0f,  0.0f,
@@ -32,25 +43,12 @@ QGLWnd::QGLWnd(QWidget *parent):QOpenGLWidget(parent)
     texs[0]=0;
     texs[1]=0;
     texs[2]=0;
+
 }
 
 QGLWnd::~QGLWnd()
 {
-    if(nullptr != datas[0])
-    {
-        delete datas[0];
-        datas[0]=nullptr;
-    }
-    if(nullptr != datas[1] )
-    {
-        delete datas[1];
-         datas[1]=nullptr;
-    }
-    if(nullptr != datas[2])
-    {
-        delete datas[2];
-        datas[2]=nullptr;
-    }
+
 }
 
 
@@ -68,28 +66,28 @@ void QGLWnd::updateVideoFrame(VideoFormat *format)
     {
 
         format->renderFrameMutex->lock();
-        if(NULL != datas[0])
-            {
-                delete datas[0];
-                datas[0]=nullptr;
-            }
-            if(NULL != datas[1] )
-            {
-                delete datas[1];
-                 datas[1]=nullptr;
-            }
-            if(NULL != datas[2])
-            {
-                delete datas[2];
-                 datas[2]=nullptr;
-            }
-        if(datas[0] ==nullptr)
+
+
+        if(nullptr != datas[0])
         {
-            datas[0] = new unsigned char[format->renderFrame->linesize[0]*height];		//Y
-            datas[1] = new unsigned char[format->renderFrame->linesize[1]*height /2];	//U
-            datas[2] = new unsigned char[format->renderFrame->linesize[2]*height /2];	//V
+            delete datas[0];
+            datas[0]=nullptr;
+        }
+        if(nullptr != datas[1] )
+        {
+            delete datas[1];
+             datas[1]=nullptr;
+        }
+        if(nullptr != datas[2])
+        {
+            delete datas[2];
+            datas[2]=nullptr;
         }
 
+
+        datas[0] = new unsigned char[format->renderFrame->linesize[0]*height];		//Y
+        datas[1] = new unsigned char[format->renderFrame->linesize[1]*height /2];	//U
+        datas[2] = new unsigned char[format->renderFrame->linesize[2]*height /2];	//V
 
         for(int i = 0; i < height; i++) //Y
             memcpy(datas[0] + width*i, format->renderFrame->data[0] + format->renderFrame->linesize[0]*i, format->renderFrame->linesize[0]);
@@ -102,7 +100,6 @@ void QGLWnd::updateVideoFrame(VideoFormat *format)
 
     format->renderFrameMutex->unlock();
     mux.unlock();
-    format->renderFrame;
     this->update();
 }
 
@@ -113,16 +110,23 @@ void QGLWnd::initializeGL()
     isinit =true;
     printVersionInformation();
     outputFunc(openGLFeatures());
+
+    // Set global information
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+//    glViewport(0,0,width(),height());
+
+    // Create Shader (Do not release until VAO is created)
     initData();
+   // initTextures();
+
 }
 
 
 
 void QGLWnd::initData()
 {
-    //shader
     m_program = new QOpenGLShaderProgram();
+
     m_program->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/res/video.vert");
     m_program->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/res/planar.frag");
     m_program->link();
@@ -132,9 +136,11 @@ void QGLWnd::initData()
     //设置为单位矩阵
     mModelMatrix.setToIdentity();
     mViewMatrix.setToIdentity();
+
+   // mViewMatrix.translate(0,0,2);
     mProjectionMatrix.setToIdentity();
 
-    //设置shader变量
+
     mMMatrixHandle	= m_program->uniformLocation("Mmatrix");
     mVMatrixHandle	= m_program->uniformLocation("Vmatrix");
     mPMatrixHandle	= m_program->uniformLocation("Pmatrix");
@@ -144,7 +150,6 @@ void QGLWnd::initData()
     unis[1] = m_program->uniformLocation("tex_u");
     unis[2] = m_program->uniformLocation("tex_v");
 
-    //vbo 顶点坐标
     if(!m_vbo){
         m_vbo = new QOpenGLBuffer;
         m_vbo->setUsagePattern( QOpenGLBuffer::StaticDraw );
@@ -154,7 +159,7 @@ void QGLWnd::initData()
         m_vbo->release();
     }
 
-    //ibo 纹理坐标
+
     if(!m_ibo){
         m_ibo = new QOpenGLBuffer;
         m_ibo->setUsagePattern( QOpenGLBuffer::StaticDraw );
@@ -164,7 +169,7 @@ void QGLWnd::initData()
         m_ibo->release();
     }
 
-    //ibo和vbo保存到 vao中
+
     if(!m_vao){
         m_vao = new QOpenGLVertexArrayObject;
         m_vao->create();
@@ -194,7 +199,6 @@ void QGLWnd::initData()
     }
     glGenTextures(3, texs);
 
-
     //Y
     glBindTexture(GL_TEXTURE_2D, texs[0]);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -214,8 +218,8 @@ void QGLWnd::initData()
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width / 2, height / 2, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
 
 
-    m_renderFbo = new QOpenGLFramebufferObject(width,height,GL_TEXTURE_2D);
-    m_renderFbo->bindDefault();
+//    m_renderFbo = new QOpenGLFramebufferObject(width,height,GL_TEXTURE_2D);
+//    m_renderFbo->bindDefault();
 }
 
 void QGLWnd::paintGL()
@@ -225,29 +229,29 @@ void QGLWnd::paintGL()
         return;
     }
 
+
     if(datas[0] == nullptr)
     {
         return;
     }
 
-
+    mux.lock();
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //开启shader
+    //m_renderFbo->bind();
     m_program->bind();
-    //开启fbo
-    m_renderFbo->bind();
-    //开启vao
-    m_vao->bind();
+  m_vao->bind();
 
-    //绘制
     draw();
-
-    m_vao->release();
+   m_vao->release();
     m_program->release();
-    m_renderFbo->release();
+
+//   m_renderFbo->release();
+
+    mux.unlock();
+
 }
 
 
@@ -259,26 +263,32 @@ void QGLWnd::draw()
     m_program->setUniformValue(mVMatrixHandle, mViewMatrix);
     m_program->setUniformValue(mPMatrixHandle, mProjectionMatrix);
 
-    //纹理对齐
+
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texs[0]);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RED, GL_UNSIGNED_BYTE, datas[0]);
     glUniform1i(unis[0], 0);
 
+
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, texs[1]);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width / 2, height / 2, GL_RED, GL_UNSIGNED_BYTE, datas[1]);
     glUniform1i(unis[1], 1);
+
 
     glActiveTexture(GL_TEXTURE0 + 2);
     glBindTexture(GL_TEXTURE_2D, texs[2]);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width / 2, height / 2, GL_RED, GL_UNSIGNED_BYTE, datas[2]);
     glUniform1i(unis[2], 2);
 
-    m_renderFbo->takeTexture();
+   //m_renderFbo->takeTexture();
     glDrawArrays(GL_TRIANGLE_FAN, 0,4);
 
+
+
+
+    m_vao->release();
 }
 
 

@@ -64,6 +64,10 @@ public:
     QOpenGLShaderProgram *m_program;
 
 
+    QVector<QVector3D> vertices;
+    QVector<QVector2D> texcoords;
+
+
 
 
     //顶点缓冲区对象：存储顶点数据
@@ -88,11 +92,8 @@ public:
 
     VideoFormat m_format;
     QMutex mux;
-
-
     //材质内存空间
     unsigned char *datas[3];
-    //
     GLuint texs[3];
     GLuint unis[3];
 

@@ -20,9 +20,7 @@ int main(int argc, char *argv[])
 
     QmPlay w;
 
-    quint16 aa = 789;
-    quint8 p[2];
-    memcpy(&p,&aa,sizeof(16));
+
     w.show();
     return a.exec();
 }

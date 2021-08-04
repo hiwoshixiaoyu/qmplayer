@@ -9,7 +9,7 @@ DecodeThread::DecodeThread(VideoState *is)
 
 int DecodeThread::RunAudio()
 {
-
+       return 1;
        AVFrame *frame = av_frame_alloc();
        Frame *af;
 
@@ -54,6 +54,7 @@ int DecodeThread::RunAudio()
 
 int DecodeThread::RunVideo()
 {
+
       AVFrame *frame = av_frame_alloc();
       double pts;
       double duration;
@@ -115,3 +116,4 @@ int DecodeThread::RunSubtitle()
           }
       }
 }
+

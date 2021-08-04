@@ -13,6 +13,9 @@ static int framedrop = -1;
 #define EXTERNAL_CLOCK_SPEED_MIN  0.900
 #define EXTERNAL_CLOCK_SPEED_MAX  1.010
 #define EXTERNAL_CLOCK_SPEED_STEP 0.001
+void VideoState::destroy()
+{
+}
 void VideoState::initDecoder()
 {
 
@@ -80,14 +83,9 @@ bool VideoState::tickTask(AVPacket *pkt)
     bool ret = true;
     do
     {
-        if(abort_request)
-        {
-            break;
-        }
 
         dealPaused();
         dealSeek_req();
-
         ret = dealqueue_attachments_req(pkt);
         if(ret)
         {

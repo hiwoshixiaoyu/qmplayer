@@ -19,7 +19,7 @@ HEADERS += \
     $$PWD/decoder.h \
     $$PWD/packetqueue.h \
     $$PWD/framequeue.h \
-    $$PWD/readthread.h
+    $$PWD/readthread.h \
 
 SOURCES += \
     $$PWD/videostate.cpp \
@@ -27,4 +27,4 @@ SOURCES += \
     $$PWD/packetqueue.cpp \
     $$PWD/framequeue.cpp \
     $$PWD/readthread.cpp \
-    $$PWD/decodethread.cpp
+    $$PWD/decodethread.cpp \

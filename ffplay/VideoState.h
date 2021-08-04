@@ -148,6 +148,7 @@ public:
 
 
 public:
+  void destroy();
   void initDecoder();
   void init();
   bool tickTask(AVPacket *pkt);

@@ -30,6 +30,10 @@ private slots:
     void RefreshVideo();
     void on_btnplay_clicked();
 
+    void on_btnstop_clicked();
+
+    void on_btnrender_clicked();
+
 private:
     Ui::QmPlay *ui;
     Tester t;
